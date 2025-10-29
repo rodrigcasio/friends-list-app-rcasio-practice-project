@@ -22,9 +22,15 @@ router.get("/",(req,res) => {
 });
 
 // GET by specific ID request: Retrieve a single friend with email ID
-
 router.get('/:email', (req, res) => {
+  const email = req.params.email;
   
+  if (!friends) {
+    return res.status(400).json({ message: 'No friends available'});
+  }
+
+  // res.status(200).json({ user: friends[email] });
+  res.status(200).send(friends[email]);
 });
 
 // POST request: Add a new friend
