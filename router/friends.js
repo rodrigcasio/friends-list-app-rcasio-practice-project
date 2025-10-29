@@ -82,9 +82,40 @@ router.put('/:email', (req, res) => {
 });
 
 // DELETE request: Delete a friend by email id
-router.delete("/:email", (req, res) => {
-  // Update the code here
-  res.send("Yet to be implemented")//This line is to be replaced with actual return value
+router.delete('/:email', (req, res) => {
+  const email = req.params.email;
+  const foundFriend = friends.find(friend => friend === email);
+
+  if (foundFriend) {
+    delete friends[email];
+
+    res.status(200).json({ message: `Friend with the email ${email} successfully deleted.` });
+  } else {
+
+    res.status(400).send(`Could not find user with '${email}' email. Please try again.` );
+  }
 });
 
 module.exports=router;
+
+
+/*
+    Diff approaches
+
+
+router.delete('/:email', (req, res) => {
+  const email = req.params.email;
+  const userFound = friends.find(friend => friend === email);
+  
+  if (!userFound) {
+    return res.status(400).json({ message: `Could not find friend with emial ${email}. Please try again` });
+  }
+
+  friends = friends.filter((friend) => friend != userFound);
+  return res.status(200).json({ message: `Friend '${userFound} has been removed successfully.` });
+});
+
+
+
+*/
+
