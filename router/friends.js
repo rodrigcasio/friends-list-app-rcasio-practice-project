@@ -11,10 +11,11 @@ let friends = {
 
 // GET request: Retrieve all friends
 router.get("/",(req,res)=>{
+  if (!friends) {
+    return res.status(400).json({ message: `Not available friends` });
+  }
 
-  // Update the code here
-
-  res.send("Yet to be implemented")//This line is to be replaced with actual return value
+  res.status(200).json({ message: `Current Friends`, friends: friends });
 });
 
 // GET by specific ID request: Retrieve a single friend with email ID
