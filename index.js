@@ -37,7 +37,7 @@ const authenticatedUser = (username, password) => {
 
 const app = express();
 
-app.use(session({secret:"fingerpint"},resave=true,saveUninitialized=true));
+app.use(session({secret:"fingerpint"}, resave = true, saveUninitialized = true));
 
 app.use(express.json());
 
@@ -49,9 +49,9 @@ app.use("/friends", (req, res, next) => {
     if (req.session.authorization) {
         let token = req.session.authorization['accessToken'];
 
-        jwt.verify(token, "access", (err, user) => {
+        jwt.verify(token, "access", (err, decoded) => {
             if (!err) {
-                req.user = user;
+                req.user = decoded;
                 next(); // Proceed to the next middleware
             } else {
                 return res.status(403).json({ message: "User not authenticated" });
@@ -78,7 +78,7 @@ app.post("/login", (req, res) => {
 
     if (authenticatedUser(username, password)) {
 
-        let accessToken = jwt.sign({ data: password }, 'access', { expiresIn: 60 * 60 });
+        let accessToken = jwt.sign({ data: password }, 'access', { expiresIn: '5m' });   // optional 60  (for 60s)
         req.session.authorization = { accessToken, username };
 
         return res.status(200).send("User successfully logged in");
@@ -109,8 +109,9 @@ app.post("/register", (req, res) => {
 });
 
 
-const PORT =5000;
+const PORT = 5000;
 
+// important to place it here (new)
 app.use("/friends", routes);
 
 

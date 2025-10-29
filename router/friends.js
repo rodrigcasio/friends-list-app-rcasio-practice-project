@@ -32,18 +32,22 @@ router.get('/:email', (req, res) => {
   res.status(200).send(friends[email]);
 });
 
+// modified and secure approach added
 router.post('/', (req, res) => {
-  if (req.body.email) {
-    friends[req.body.email] = {
-      "firstName": req.body.firstName,
-      "lastName": req.body.lastName,
-      "DOB": req.body.DOB
-    };
+
+  if (friends[req.body.email]) {
+    return res.status(403).json({ message: `Email already exists. Please try new one`});
   }
 
-  // res.status(200).json({ message: `User ${req.body.email} has been added successfully.` });
-  res.send(`User ${req.body.firstName} has been addded!`);
+  friends[req.body.email] = {
+    "firstName": req.body.firstName,
+    "lastName": req.body.lastName,
+    "DOB": req.body.DOB
+  };
+
+  return res.status(200).send(`New Friend ${req.body.firstName} has been added successfully.`);
 });
+
 
 // PUT request: Update the details of a friend with email id
 router.put('/:email', (req, res) => {
@@ -84,9 +88,8 @@ router.put('/:email', (req, res) => {
 // DELETE request: Delete a friend by email id
 router.delete('/:email', (req, res) => {
   const email = req.params.email;
-  const foundFriend = friends.find(friend => friend === email);
 
-  if (foundFriend) {
+  if (friends[email]) {
     delete friends[email];
 
     res.status(200).json({ message: `Friend with the email ${email} successfully deleted.` });
@@ -115,7 +118,19 @@ router.delete('/:email', (req, res) => {
   return res.status(200).json({ message: `Friend '${userFound} has been removed successfully.` });
 });
 
+ (initial aproach)
+router.post('/', (req, res) => {
+  if (req.body.email) {
+    friends[req.body.email] = {
+      "firstName": req.body.firstName,
+      "lastName": req.body.lastName,
+      "DOB": req.body.DOB
+    };
+  }
 
+  // res.status(200).json({ message: `User ${req.body.email} has been added successfully.` });
+  res.send(`User ${req.body.firstName} has been addded!`);
+});
 
 */
 
