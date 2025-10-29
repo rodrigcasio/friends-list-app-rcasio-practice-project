@@ -45,7 +45,7 @@ app.use(express.json());
     // Check if user is logged in and has valid access token
         // Verify JWT token
 //
-app.use("/friends", function auth(req, res, next) {
+app.use("/friends", (req, res, next) => {
     if (req.session.authorization) {
         let token = req.session.authorization['accessToken'];
 
