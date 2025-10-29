@@ -10,20 +10,22 @@ let friends = {
 
 
 // GET request: Retrieve all friends
-router.get("/",(req,res)=>{
+
+router.get("/",(req,res) => {
   if (!friends) {
     return res.status(400).json({ message: `Not available friends` });
   }
 
-  res.status(200).json({ message: `Current Friends`, friends: friends });
+  //res.status(200).json({ message: `Current Friends`, friends: friends });
+
+  res.status(200).send(JSON.stringify(friends, null, 4));
 });
 
 // GET by specific ID request: Retrieve a single friend with email ID
-router.get("/:email",(req,res)=>{
-  // Update the code here
-  res.send("Yet to be implemented")//This line is to be replaced with actual return value
-});
 
+router.get('/:email', (req, res) => {
+  
+});
 
 // POST request: Add a new friend
 router.post("/",(req,res)=>{
