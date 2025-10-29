@@ -9,39 +9,128 @@ let friends = {
 };
 
 
-// GET request: Retrieve all friends
-router.get("/",(req,res)=>{
 
-  // Update the code here
+router.get("/",(req,res) => {
+  if (!friends) {
+    return res.status(400).json({ message: `Not available friends` });
+  }
 
-  res.send("Yet to be implemented")//This line is to be replaced with actual return value
-});
+  //res.status(200).json({ message: `Current Friends`, friends: friends });
 
-// GET by specific ID request: Retrieve a single friend with email ID
-router.get("/:email",(req,res)=>{
-  // Update the code here
-  res.send("Yet to be implemented")//This line is to be replaced with actual return value
+  res.status(200).send(JSON.stringify(friends, null, 4));
 });
 
 
-// POST request: Add a new friend
-router.post("/",(req,res)=>{
-  // Update the code here
-  res.send("Yet to be implemented")//This line is to be replaced with actual return value
+router.get('/:email', (req, res) => {
+  const email = req.params.email;
+
+  if (!friends) {
+    return res.status(400).json({ message: 'No friends available'});
+  }
+
+  // res.status(200).json({ user: friends[email] });
+  res.status(200).send(friends[email]);
+});
+
+// modified and secure approach added
+router.post('/', (req, res) => {
+
+  if (friends[req.body.email]) {
+    return res.status(403).json({ message: `Email already exists. Please try new one`});
+  }
+
+  friends[req.body.email] = {
+    "firstName": req.body.firstName,
+    "lastName": req.body.lastName,
+    "DOB": req.body.DOB
+  };
+
+  return res.status(200).send(`New Friend ${req.body.firstName} has been added successfully.`);
 });
 
 
 // PUT request: Update the details of a friend with email id
-router.put("/:email", (req, res) => {
-  // Update the code here
-  res.send("Yet to be implemented")//This line is to be replaced with actual return value
+router.put('/:email', (req, res) => {
+  const email = req.params.email;
+  const friend = friends[email];
+
+  if (friend) {
+    let newFirstName = req.body.firstName;
+    if (newFirstName) {
+      friend["firstName"] = newFirstName;
+    }
+
+    let newLastName = req.body.lastName;
+    if (newLastName) {
+      friend["lastName"] = newLastName;
+    }
+
+    let newEmail = req.body.email;
+    if (newEmail) {
+      friend["email"] = newEmail;
+    }
+
+    let newDOB = req.body.DOB;
+    if (newDOB) {
+      friend["DOB"] = newDOB;
+    }
+
+    // res.status(200).json({ message: `Friend with the email ${email} updated`, friend: friend });
+    res.send(`Friend with email ${email} updated. `);
+
+  } else {
+    // res.status(400).json({ message: `Invalid email. Could not find friend with email '${req.params.email}.'` });
+    res.send('Unable to find friend!');
+
+  }
 });
 
-
 // DELETE request: Delete a friend by email id
-router.delete("/:email", (req, res) => {
-  // Update the code here
-  res.send("Yet to be implemented")//This line is to be replaced with actual return value
+router.delete('/:email', (req, res) => {
+  const email = req.params.email;
+
+  if (friends[email]) {
+    delete friends[email];
+
+    res.status(200).json({ message: `Friend with the email ${email} successfully deleted.` });
+  } else {
+
+    res.status(400).send(`Could not find user with '${email}' email. Please try again.` );
+  }
 });
 
 module.exports=router;
+
+
+/*
+    Diff approaches
+
+
+router.delete('/:email', (req, res) => {
+  const email = req.params.email;
+  const userFound = friends.find(friend => friend === email);
+  
+  if (!userFound) {
+    return res.status(400).json({ message: `Could not find friend with emial ${email}. Please try again` });
+  }
+
+  friends = friends.filter((friend) => friend != userFound);
+  return res.status(200).json({ message: `Friend '${userFound} has been removed successfully.` });
+});
+
+ (initial aproach)
+router.post('/', (req, res) => {
+  if (req.body.email) {
+    friends[req.body.email] = {
+      "firstName": req.body.firstName,
+      "lastName": req.body.lastName,
+      "DOB": req.body.DOB
+    };
+  }
+
+  // res.status(200).json({ message: `User ${req.body.email} has been added successfully.` });
+  res.send(`User ${req.body.firstName} has been addded!`);
+});
+
+*/
+
